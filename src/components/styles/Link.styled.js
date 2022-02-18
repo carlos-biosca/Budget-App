@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 export const StyledLink = styled(Link)`
   display: inline-block;
-  margin-top: 5em;
   font-size: 1.1rem;
 
   &:hover{

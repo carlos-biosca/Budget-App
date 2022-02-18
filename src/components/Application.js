@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Form from './Form'
 import PageLink from './PageLink'
@@ -55,6 +55,9 @@ export default function Application ({ openModal, history }) {
   const [filteredList, setFilteredList] = useState([])
   const [cercador, setCercador] = useState('')
 
+  //control primer render
+  const firstUpdate = useRef(true)
+
 
 
   //Calcular preu total checkboxes + pagines + idiomes
@@ -92,13 +95,22 @@ export default function Application ({ openModal, history }) {
 
   // Guardar llista al localstorage
   useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false
+      return
+    }
     localStorage.setItem('llista', JSON.stringify(list))
   }, [list])
 
   //Obtenir llista de localstorage
   useEffect(() => {
-    setList(JSON.parse(localStorage.getItem('llista')))
-    setFilteredList(JSON.parse(localStorage.getItem('llista')))
+    if (localStorage.getItem('llista')) {
+      setList(JSON.parse(localStorage.getItem('llista')))
+      setFilteredList(JSON.parse(localStorage.getItem('llista')))
+      return
+    }
+    setList([])
+    setFilteredList([])
   }, [])
 
   //Obtenir pressupost de localstorage o de la URL
@@ -144,7 +156,7 @@ export default function Application ({ openModal, history }) {
 
   // modificar url
   useEffect(() => {
-    const url = `?paginaWeb=${formvalues[0].checked}&campaniaSeo=${formvalues[1].checked}&campaniaAds=${formvalues[2].checked}&nPaginas=${pagines}&nIdiomas=${idiomes}&pCheckboxes=${preuCheckBoxes}`
+    const url = `app?paginaWeb=${formvalues[0].checked}&campaniaSeo=${formvalues[1].checked}&campaniaAds=${formvalues[2].checked}&nPaginas=${pagines}&nIdiomas=${idiomes}&pCheckboxes=${preuCheckBoxes}`
     history.push(url)
   }, [formvalues, pagines, idiomes, preuCheckBoxes, history])
 
